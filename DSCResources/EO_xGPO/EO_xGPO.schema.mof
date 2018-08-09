@@ -1,0 +1,10 @@
+
+[ClassVersion("1.0.0.0"), FriendlyName("xGPO")]
+class EO_xGPO : OMI_BaseResource
+{
+    [Write, Description("Indicates whether the GPO should be present or absent"), ValueMap{"Absent","Present"}, Values{"Absent","Present"}] String Ensure;
+    [Key, Description("Specifies a display name for the new GPO.")] String Name;
+    [Write, Description("Includes a comment for the new GPO. The comment string must be enclosed in double- or single-quotation marks and can contain 2,047 characters.")] String Comment;
+    [Write, Description("Specifies the domain for this cmdlet. You must specify the fully qualified domain name (FQDN) of the domain.")] String Domain;
+};
+

@@ -64,3 +64,4 @@ Configures a policy setting that creates the following registry values when Grou
 * Initial release with the following resources
   * **xGPO**
   * **xGPRegistryValue**
+  * **xGPRegistryValueList**

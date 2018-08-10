@@ -1,0 +1,13 @@
+
+[ClassVersion("1.0.0.0"), FriendlyName("xGPLink")]
+class EO_xGPLink : OMI_BaseResource
+{
+    [Write, Description("Indicates whether the GPLink should be present or absent"), ValueMap{"Absent","Present"}, Values{"Absent","Present"}] String Ensure;
+    [Key, Description("Specifies the GPO to link by its display name.")] String Name;
+    [Key, Description("Specifies the LDAP distinguished name of the site, domain, or OU to which to link the GPO. For example, for the MyOU organizational unit in the contoso.com domain, the LDAP distinguished name is ou=MyOU,dc=contoso,dc=com.")] String Target;
+    [Write, Description("Specifies whether the GPO link is enabled. The acceptable values for this parameter are: Yes or No. By default, Group Policy processing is enabled for all GPO links."), ValueMap{"Yes", "No"}, Values{"Yes", "No"}] String LinkEnabled;
+    [Write, Description("Specifies the link order for the GPO link. You can specify a number that is between one and the current number of GPO links to the target site, domain, or OU, plus one.")] uint32 Order;
+    [Write, Description("Specifies the domain for this cmdlet. You must specify the fully qualified domain name (FQDN) of the domain.")] String Domain;
+    [Write, Description("Specifies whether the GPO link is enforced. You can specify Yes or No. By default, GPO links are not enforced."), ValueMap{"Yes", "No"}, Values{"Yes", "No"}] String Enforced;
+};
+

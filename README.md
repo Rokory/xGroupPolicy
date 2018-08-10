@@ -55,6 +55,15 @@ Configures a policy setting that creates the following registry values when Grou
 * **Domain**: Specifies the domain for this cmdlet. You must specify the fully qualified domain name (FQDN) of the domain.
 * **Disable**: Indicates that the cmdlet disables the registry-based policy setting.
 
+### xGPLink
+* **Ensure**: Indicates whether the GPLink should be present or absent. 
+* **Name**: Specifies the GPO to link by its display name.
+* **Target**: Specifies the LDAP distinguished name of the site, domain, or OU to which to link the GPO. For example, for the MyOU organizational unit in the contoso.com domain, the LDAP distinguished name is ou=MyOU,dc=contoso,dc=com.
+* **LinkEnabled**: Specifies whether the GPO link is enabled. The acceptable values for this parameter are: Yes or No. By default, Group Policy processing is enabled for all GPO links. 
+* **Order**: Specifies the link order for the GPO link. You can specify a number that is between one and the current number of GPO links to the target site, domain, or OU, plus one.
+* **Domain**: Specifies the domain for this cmdlet. You must specify the fully qualified domain name (FQDN) of the domain.
+* **Enforced**: Specifies whether the GPO link is enforced. You can specify Yes or No. By default, GPO links are not enforced.
+
 ## Versions
 
 ### Unreleased
@@ -65,3 +74,4 @@ Configures a policy setting that creates the following registry values when Grou
   * **xGPO**
   * **xGPRegistryValue**
   * **xGPRegistryValueList**
+  * **xGPLink**

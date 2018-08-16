@@ -135,7 +135,7 @@ function Set-TargetResource
     # Update setting
 
     if ($Disable) {
-        Write-Verbose "Disabling value $ValuenName in $Key in GPO $Name..."
+        Write-Verbose "Disabling value $ValueName in $Key in GPO $Name..."
 
         # Remove parameters, we do not need
         $PSBoundParameters.Remove('Value')
@@ -143,7 +143,7 @@ function Set-TargetResource
     }
 
     if (-not $Disable) {
-        Write-Verbose "Setting value $ValuenName in $Key in GPO $Name to $Value..."
+        Write-Verbose "Setting value $ValueName in $Key in GPO $Name to $Value..."
     }
 
     Write-Verbose "Calling Set-GPRegistryValue..."

@@ -42,7 +42,8 @@ branch, and be released to [PowerShell Gallery](https://www.powershellgallery.co
 
 * **Name**: Specifies the GPO in which to configure the registry-based policy setting by its display name.
 * **Key**: Specifies the registry key for the registry-based policy setting; for instance, HKLM\\Software\\Policies\\Microsoft\\Windows NT\\DNSClient.
-* **ValuePrefix**: Specifies the value data for the registry-based policy setting.
+* **ValueName**: Array of value names to be added to the registry key. Cannot be used together with ValuePrefix.
+* **ValuePrefix**: Specifies the value data for the registry-based policy setting. Cannot be used together with ValueName.
 Configures a policy setting that creates the following registry values when Group Policy is applied on the client:
 
 "HKLM\SOFTWARE\Policies\ExampleKey ExValue1" 100
@@ -68,7 +69,11 @@ Configures a policy setting that creates the following registry values when Grou
 
 ### Unreleased
 
-### 1.0.0.0
+### 1.1.0
+
+* Support for ValueName array in xGPRegistryValueList resource.
+
+### 1.0.0
 
 * Initial release with the following resources
   * **xGPO**

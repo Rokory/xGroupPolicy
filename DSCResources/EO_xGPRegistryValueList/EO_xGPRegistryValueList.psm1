@@ -28,36 +28,38 @@ function Get-TargetResource
 
     
     $values = New-Object -TypeName System.Collections.ArrayList
+    $valueNames = New-Object -TypeName System.Collections.ArrayList
     $type = $null
     $disable = $true
 
     foreach ($gpRegistryValue in $gPRegistryValues) {
 
-       $count = $values.Add($gPRegistryvalue.Value)
+        $values.Add($gPRegistryvalue.Value) > $null
+        $valueNames.Add($gpRegistryValue.ValueName) > $null
 
-       if ($null -eq $type) {
-           $type = $gpRegistryValue.Type
-       }
+        if ($null -eq $type) {
+            $type = $gpRegistryValue.Type
+        }
 
-       if (($null -ne $type) -and ($type -ne $gpRegistryValue.Type)) {
-           $type = ''
-       }
+        if (($null -ne $type) -and ($type -ne $gpRegistryValue.Type)) {
+            $type = ''
+        }
 
-       if ($null -ne $disable) {
-            if ($gPRegistryvalue.PolicyState -eq 'Set') {
-                $disable = $disable -and $false
-            }
+        if ($null -ne $disable) {
+                if ($gPRegistryvalue.PolicyState -eq 'Set') {
+                    $disable = $disable -and $false
+                }
 
-            if ($gPRegistryvalue.PolicyState -eq 'Delete') {
-                $disable = $disable -and $true
-            }
-       }
+                if ($gPRegistryvalue.PolicyState -eq 'Delete') {
+                    $disable = $disable -and $true
+                }
+        }
     }
-
 
     $returnValue = @{
         Name = $Name
         Key = $Key
+        ValueName = $valueNames
         Value = $values
         Type = $type
         Disable = $disable
@@ -80,6 +82,9 @@ function Set-TargetResource
         [System.String]
         $Key,
 
+        [System.String[]]
+        $ValueName,
+
         [System.String]
         $ValuePrefix,
 
@@ -94,17 +99,11 @@ function Set-TargetResource
         $Domain,
 
         [System.Boolean]
-        $Disable,
+        $Disable
 
-        [System.Boolean]
-        $Additive
+        # [System.Boolean]
+        # $Additive # TODO: remove, should always be true
     )
-
-    # Remove parameters, we do not need
-
-    if([string]::IsNullOrWhiteSpace($Domain)) {
-        $PSBoundParameters.Remove('Domain') | Out-Null
-    }
 
     # Parameters for disabling or deleting values
 
@@ -113,9 +112,13 @@ function Set-TargetResource
         Key = $Key
         Domain = $Domain
         Disable = $Disable
+        Additive = $true
     }
 
+    # Remove parameters, we do not need
+
     if([string]::IsNullOrWhiteSpace($Domain)) {
+        $PSBoundParameters.Remove('Domain') | Out-Null
         $disableRemoveParameters.Remove('Domain') | Out-Null
     }
 
@@ -124,29 +127,37 @@ function Set-TargetResource
     if ($Disable) {
         # Disable values
 
-        Write-Verbose "Disabling value $ValuenName in $Key in GPO $Name..."
+        Write-Verbose "Disabling values $ValueName in $Key in GPO $Name..."
         $parameters = $disableRemoveParameters
     }
 
     if (-not $Disable) {
+
+        # Test, if ValuePrefix and ValueName are set at the same time.
+
+        if (($ValueName.Length -gt 0) -and ($ValuePrefix -ne $null)) {
+            throw 'ValuePrefix and ValueName paramter must no be present at the same time.'
+        }
+
         $disableRemoveParameters.Remove('Disable') | Out-Null
 
         $target = Get-TargetResource @disableRemoveParameters
 
-        # First, remove all values
+        # First, disable all values
 
         if ($target.Value.Count -gt 0) {
-            Write-Verbose "Removing value in $Key of GPO $Name..."
-            Remove-GPRegistryValue @disableRemoveParameters | Out-Null
+            Write-Verbose "Removing values in $Key of GPO $Name..."
+            Set-GPRegistryValue @disableRemoveParameters -Additive $true | Out-Null
         }
 
         # Then, add all values
-        Write-Verbose "Setting values in $Key of GPO $Name to $Value..."
+
+        Write-Verbose "Setting values $ValueName in $Key of GPO $Name to $Value..."
         $parameters = $PSBoundParameters
     }
 
     Write-Verbose "Calling Set-GPRegistryValue..."
-    Set-GPRegistryValue @parameters | Out-Null
+    Set-GPRegistryValue @parameters -Additive $true | Out-Null
 }
 
 
@@ -164,6 +175,9 @@ function Test-TargetResource
         [System.String]
         $Key,
 
+        [System.String[]]
+        $ValueName,
+
         [System.String]
         $ValuePrefix,
 
@@ -178,10 +192,10 @@ function Test-TargetResource
         $Domain,
 
         [System.Boolean]
-        $Disable,
+        $Disable
 
-        [System.Boolean]
-        $Additive
+        # [System.Boolean]
+        # $Additive # Remove
     )
 
     $target = Get-TargetResource `
@@ -209,16 +223,28 @@ function Test-TargetResource
         # and should be removed.
 
         $target.Value | ForEach-Object {
-            $result = $result -and ($Value -contains $PSItem)
+            $index = $Value.IndexOf($PSItem)
+            $result = $result -and ($index -ne -1)
+            if ($ValueName.Length -gt 0) {
+                $result = $result -and (
+                    $target.ValueName[$index] -eq $ValueName[$index]
+                )
+            }
         }
 
-        # Second, check if all values in Value paramter
+        # Third, check if all values in Value paramter
         # are also contained in key.
         # This detects values, that are not in the key yet
         # and should be added.
 
         $Value | ForEach-Object {
-            $result = $result -and ($target.Value -contains $PSItem)
+            $index = $target.Value.IndexOf($Value)
+            $result = $result -and ($index -ne -1)
+            if ($ValueName.Length -gt 0) {
+                $result = $result -and (
+                    $target.ValueName[$index] -eq $ValueName[$index]
+                )
+            }
         }
     }
 

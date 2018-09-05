@@ -232,7 +232,7 @@ function Test-TargetResource
         # and should be added.
 
         $Value | ForEach-Object {
-            $index = $target.Value.IndexOf($Value)
+            $index = $target.Value.IndexOf($PSItem)
             $result = $result -and ($index -ne -1)
             if ($ValueName.Length -gt 0) {
                 $result = $result -and (

@@ -38,7 +38,7 @@ branch, and be released to [PowerShell Gallery](https://www.powershellgallery.co
 * **Domain**: Specifies the domain for this cmdlet. You must specify the fully qualified domain name (FQDN) of the domain.
 * **Disable**: Indicates that the cmdlet disables the registry-based policy setting.
 
-### xGPRegistryValue
+### xGPRegistryValueList
 
 * **Name**: Specifies the GPO in which to configure the registry-based policy setting by its display name.
 * **Key**: Specifies the registry key for the registry-based policy setting; for instance, HKLM\\Software\\Policies\\Microsoft\\Windows NT\\DNSClient.

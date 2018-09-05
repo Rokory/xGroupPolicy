@@ -106,7 +106,8 @@ function Set-TargetResource
         $Disable
 
         # [System.Boolean]
-        # $Additive # TODO: remove, should always be true
+        # $ZeroTerminateValue
+
     )
 
     # Test, if ValuePrefix and ValueName are set at the same time.
@@ -123,7 +124,17 @@ function Set-TargetResource
         Domain = $Domain
     }
 
+    # if ($ZeroTerminateValue) {
+    #     $Value | ForEach-Object {
+    #         if ($PSItem[$PSItem.Length - 1] -ne "`0") {
+    #             $PSItem += "`0"
+    #         }
+    #     }
+    # }
+
     # Remove parameters, we do not need
+
+    $PSBoundParameters.Remove('ZeroTerminateValue')
 
     if([string]::IsNullOrWhiteSpace($Domain)) {
         $PSBoundParameters.Remove('Domain') | Out-Null
@@ -189,15 +200,27 @@ function Test-TargetResource
         $Disable
 
         # [System.Boolean]
-        # $Additive # Remove
+        # $ZeroTerminateValue
     )
+
+    # if ($ZeroTerminateValue) {
+
+    # Add a zero character to each value for comparison, as this is also added by the GP infrastructure
+    
+    for ($i = 0; $i -lt $Value.Count; $i++) {
+        if ($Value[$i][$PSItem.Length - 1] -ne "`0") {
+            $Value[$i] += "`0"
+        }
+    }
+
+    # }
 
     $target = Get-TargetResource `
         -Name $Name `
         -Key $Key `
         -Domain $Domain
 
-
+        
     # If values should be disabled, check, if all values in key are disabled
 
     if ($Disable) {

@@ -5,10 +5,12 @@ function Get-TargetResource
     param
     (
         [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
         [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Target
     )
@@ -46,11 +48,13 @@ function Set-TargetResource
         [System.String]
         $Ensure = 'Present',
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Target,
 
@@ -131,11 +135,13 @@ function Test-TargetResource
         [System.String]
         $Ensure = 'Present',
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Target,
 

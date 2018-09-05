@@ -5,14 +5,16 @@ function Get-TargetResource
     param
     (
         [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
         [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Key,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $ValueName,
 
@@ -74,11 +76,13 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Key,
 
@@ -157,11 +161,13 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 
-        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Key,
 

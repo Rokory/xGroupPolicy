@@ -5,6 +5,7 @@ function Get-TargetResource
     param
     (
         [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
 

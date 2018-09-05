@@ -109,59 +109,47 @@ function Set-TargetResource
         # $Additive # TODO: remove, should always be true
     )
 
-    # Parameters for disabling or deleting values
+    # Test, if ValuePrefix and ValueName are set at the same time.
 
-    $disableRemoveParameters = @{
+    if (($ValueName.Length -gt 0) -and -not ([String]::IsNullOrWhiteSpace($ValuePrefix))) {
+        throw 'ValuePrefix and ValueName paramter must no be present at the same time.'
+    }
+ 
+    # Build core parameters
+
+    $coreParameters = @{
         Name = $Name
         Key = $Key
         Domain = $Domain
-        Disable = $Disable
-        Additive = $true
     }
 
     # Remove parameters, we do not need
 
     if([string]::IsNullOrWhiteSpace($Domain)) {
         $PSBoundParameters.Remove('Domain') | Out-Null
-        $disableRemoveParameters.Remove('Domain') | Out-Null
+        $coreParameters.Remove('Domain') | Out-Null
     }
 
     # Update setting
 
-    if ($Disable) {
-        # Disable values
+    # First, disable all values
 
+    $target = Get-TargetResource @coreParameters
+
+    if ($target.Value.Count -gt 0) {
         Write-Verbose "Disabling values $ValueName in $Key in GPO $Name..."
-        $parameters = $disableRemoveParameters
+        Write-Verbose "Calling Set-GPRegistryValue..."
+        Set-GPRegistryValue @coreParameters -Disable | Out-Null
     }
+
+    # Then, add all values
 
     if (-not $Disable) {
-
-        # Test, if ValuePrefix and ValueName are set at the same time.
-
-        if (($ValueName.Length -gt 0) -and ($ValuePrefix -ne $null)) {
-            throw 'ValuePrefix and ValueName paramter must no be present at the same time.'
-        }
-
-        $disableRemoveParameters.Remove('Disable') | Out-Null
-
-        $target = Get-TargetResource @disableRemoveParameters
-
-        # First, disable all values
-
-        if ($target.Value.Count -gt 0) {
-            Write-Verbose "Removing values in $Key of GPO $Name..."
-            Set-GPRegistryValue @disableRemoveParameters -Additive $true | Out-Null
-        }
-
-        # Then, add all values
-
         Write-Verbose "Setting values $ValueName in $Key of GPO $Name to $Value..."
         $parameters = $PSBoundParameters
+        Write-Verbose "Calling Set-GPRegistryValue..."
+        Set-GPRegistryValue @parameters -Additive | Out-Null
     }
-
-    Write-Verbose "Calling Set-GPRegistryValue..."
-    Set-GPRegistryValue @parameters -Additive $true | Out-Null
 }
 
 
